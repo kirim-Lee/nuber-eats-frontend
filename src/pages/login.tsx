@@ -1,4 +1,16 @@
+import { gql, useMutation } from '@apollo/client';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
+import { FormError } from '../components/form-error';
+
+const LOGIN_MUTATION = gql`
+  mutation LoginMutation($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      ok
+      error
+      token
+    }
+  }
+`;
 
 type LoginForm = {
   email: string;
@@ -6,10 +18,14 @@ type LoginForm = {
 };
 
 export const Login = () => {
-  const { register, getValues, errors, handleSubmit } = useForm<LoginForm>();
-  const onSubmit: SubmitHandler<LoginForm> = (data) => {};
+  const [login, { data: loginData }] = useMutation<LoginForm>(LOGIN_MUTATION);
+  const { register, errors, handleSubmit } = useForm<LoginForm>();
+  const onSubmit: SubmitHandler<LoginForm> = (data) => {
+    login({ variables: data });
+  };
   const onInvalid: SubmitErrorHandler<LoginForm> = () => {};
-  console.log(errors);
+
+  console.log(loginData);
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
       <div className="bg-white w-full max-w-lg pt-8 pb-7 rounded-lg text-center">
@@ -25,10 +41,8 @@ export const Login = () => {
             name="email"
             ref={register({ required: 'Email is required' })}
           />
-          {errors.email && (
-            <span className="text-sm text-red-500 text-right">
-              {errors.email?.message}
-            </span>
+          {errors.email?.message && (
+            <FormError errorMessage={errors.email.message} />
           )}
           <input
             placeholder="password"
@@ -37,10 +51,8 @@ export const Login = () => {
             name="password"
             ref={register({ required: 'Password is required' })}
           />
-          {errors.password && (
-            <span className="text-sm text-red-500 text-right">
-              {errors.password?.message}
-            </span>
+          {errors.password?.message && (
+            <FormError errorMessage={errors.password.message} />
           )}
           <button type="submit" className="button-black mt-3">
             login
