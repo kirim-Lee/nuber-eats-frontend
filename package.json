@@ -29,6 +29,7 @@
   "scripts": {
     "build:css": "tailwind build ./src/app.css -o ./src/styles.css",
     "dev": "craco start",
+    "apollo:codegen": "apollo client:codegen src/__generated__ --target=typescript --outputFlat",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
