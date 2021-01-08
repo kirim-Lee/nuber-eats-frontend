@@ -1,5 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import { FormButton } from '../components/form-button';
 import { FormError } from '../components/form-error';
 import {
   loginMutation,
@@ -20,16 +22,25 @@ export const Login = () => {
   const onCompleted = ({ login: { ok, token } }: loginMutation) => {
     if (ok) {
       console.log(token);
-    } else {
     }
   };
+
   const onError = () => null;
-  const loginMutationResult = { onCompleted, onError };
-  const [login, { data: loginResult, loading: loginLoading }] = useMutation<
-    loginMutation,
-    loginMutationVariables
-  >(LOGIN_MUTATION, loginMutationResult);
-  const { register, errors, handleSubmit } = useForm<loginMutationVariables>();
+
+  const [
+    login,
+    { data: loginResult, error: fetchError, loading: loginLoading },
+  ] = useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION, {
+    onCompleted,
+    onError,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<loginMutationVariables>({ mode: 'onChange' });
 
   const onSubmit: SubmitHandler<loginMutationVariables> = (variables) => {
     login({ variables });
@@ -37,11 +48,16 @@ export const Login = () => {
   const onInvalid: SubmitErrorHandler<loginMutationVariables> = () => {};
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-800">
-      <div className="bg-white w-full max-w-lg pt-8 pb-7 rounded-lg text-center">
-        <h3 className="text-2xl text-gray-800">Nuber eats Login</h3>
+    <div className="h-screen flex items-center flex-col mt-10 lg:mt-32">
+      <div className="w-full max-w-screen-sm px-5">
+        <h3 className="text-3xl scale-125 text-center mb-10 font-medium">
+          <span>Nuber</span> <span className=" text-lime-400">Eats</span>
+        </h3>
+        <h4 className="w-full text-left text-2xl mb-5 font-thin">
+          welcome back
+        </h4>
         <form
-          className="grid gap-3 mt-5 px-5"
+          className="grid gap-3 mt-5 "
           onSubmit={handleSubmit(onSubmit, onInvalid)}
         >
           <input
@@ -64,17 +80,26 @@ export const Login = () => {
           {errors.password?.message && (
             <FormError errorMessage={errors.password.message} />
           )}
-          <button
-            type="submit"
-            className="button-black mt-3"
-            disabled={loginLoading}
-          >
-            {loginLoading ? 'loading...' : 'login'}
-          </button>
+
+          <FormButton
+            label="login"
+            disabled={loginLoading || !formState.isValid}
+            loading={loginLoading}
+          />
+
           {loginResult?.login?.error && (
             <FormError errorMessage={loginResult.login.error} />
           )}
+          {fetchError?.message && (
+            <FormError errorMessage={fetchError.message} />
+          )}
         </form>
+        <div className="text-sm text-center mt-3">
+          New to Nuber ?{' '}
+          <Link to="/create-account" className="text-lime-600 hover:underline">
+            Create an Account
+          </Link>
+        </div>
       </div>
     </div>
   );
