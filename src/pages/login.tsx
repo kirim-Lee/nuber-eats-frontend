@@ -4,7 +4,7 @@ import { FormError } from '../components/form-error';
 import {
   loginMutation,
   loginMutationVariables,
-} from '../__generated__/LoginMutation';
+} from '../__generated__/loginMutation';
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($email: String!, $password: String!) {
@@ -16,27 +16,30 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-type LoginForm = {
-  email: string;
-  password: string;
-};
-
 export const Login = () => {
-  const [login, { data: loginData }] = useMutation<
+  const onCompleted = ({ login: { ok, token } }: loginMutation) => {
+    if (ok) {
+      console.log(token);
+    } else {
+    }
+  };
+  const onError = () => null;
+  const loginMutationResult = { onCompleted, onError };
+  const [login, { data: loginResult, loading: loginLoading }] = useMutation<
     loginMutation,
     loginMutationVariables
-  >(LOGIN_MUTATION);
-  const { register, errors, handleSubmit } = useForm<LoginForm>();
-  const onSubmit: SubmitHandler<LoginForm> = (data) => {
-    login({ variables: data });
-  };
-  const onInvalid: SubmitErrorHandler<LoginForm> = () => {};
+  >(LOGIN_MUTATION, loginMutationResult);
+  const { register, errors, handleSubmit } = useForm<loginMutationVariables>();
 
-  console.log(loginData);
+  const onSubmit: SubmitHandler<loginMutationVariables> = (variables) => {
+    login({ variables });
+  };
+  const onInvalid: SubmitErrorHandler<loginMutationVariables> = () => {};
+
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
       <div className="bg-white w-full max-w-lg pt-8 pb-7 rounded-lg text-center">
-        <h3 className="text-2xl text-gray-800">Login</h3>
+        <h3 className="text-2xl text-gray-800">Nuber eats Login</h3>
         <form
           className="grid gap-3 mt-5 px-5"
           onSubmit={handleSubmit(onSubmit, onInvalid)}
@@ -61,9 +64,16 @@ export const Login = () => {
           {errors.password?.message && (
             <FormError errorMessage={errors.password.message} />
           )}
-          <button type="submit" className="button-black mt-3">
-            login
+          <button
+            type="submit"
+            className="button-black mt-3"
+            disabled={loginLoading}
+          >
+            {loginLoading ? 'loading...' : 'login'}
           </button>
+          {loginResult?.login?.error && (
+            <FormError errorMessage={loginResult.login.error} />
+          )}
         </form>
       </div>
     </div>
