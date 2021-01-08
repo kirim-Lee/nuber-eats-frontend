@@ -6,7 +6,11 @@ interface IProps {
 }
 export const FormButton = ({ label, disabled, loading, onClick }: IProps) => {
   return (
-    <button className="button-green mt-3" disabled={disabled} onClick={onClick}>
+    <button
+      className="button-green mt-3`"
+      disabled={disabled}
+      onClick={onClick}
+    >
       {loading ? 'loading...' : label}
     </button>
   );

@@ -7,5 +7,5 @@
 }
 
 .button-green {
-  @apply py-3 px-2 text-lg font-medium text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 focus:outline-none;
+  @apply py-3 px-2 text-lg font-medium text-white bg-green-600 hover:bg-green-700 transition-colors disabled:bg-gray-200 focus:outline-none;
 }
