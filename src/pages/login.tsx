@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet';
 import { gql, useMutation } from '@apollo/client';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
@@ -49,6 +50,9 @@ export const Login = () => {
 
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-32">
+      <Helmet>
+        <title>Welcome to Nuber Eats!</title>
+      </Helmet>
       <div className="w-full max-w-screen-sm px-5">
         <h3 className="text-3xl scale-125 text-center mb-10 font-medium">
           <span>Nuber</span> <span className=" text-lime-400">Eats</span>

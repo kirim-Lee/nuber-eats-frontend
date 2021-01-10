@@ -6,6 +6,10 @@
   @apply bg-white py-3 px-2 border-2 border-gray-200 focus:outline-none hover:bg-gray-100 focus:border-green-600 transition-colors
 }
 
+.select {
+  @apply bg-white py-3 px-2 border-2 border-gray-200 
+}
+
 .button-green {
   @apply py-3 px-2 text-lg font-medium text-white bg-green-600 hover:bg-green-700 transition-colors disabled:bg-gray-200 focus:outline-none;
 }
