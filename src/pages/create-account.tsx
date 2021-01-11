@@ -1,8 +1,13 @@
 import { gql, useMutation } from '@apollo/client';
 import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import { createAccountMutationVariables } from '../__generated__/createAccountMutation';
+import { Link, useHistory } from 'react-router-dom';
+import { FormButton } from '../components/form-button';
+import { FormError } from '../components/form-error';
+import {
+  createAccountMutationVariables,
+  createAccountMutation,
+} from '../__generated__/createAccountMutation';
 import { userRole } from '../__generated__/globalTypes';
 
 const CREATE_ACCOUNT = gql`
@@ -21,11 +26,33 @@ const CREATE_ACCOUNT = gql`
 type FormType = createAccountMutationVariables;
 
 export const CreateAccount = () => {
-  const [createAccount] = useMutation(CREATE_ACCOUNT);
-  const { register } = useForm<FormType>({
+  const history = useHistory();
+  const onCompleted = ({
+    createAccount: { ok, error },
+  }: createAccountMutation) => {
+    if (ok) {
+      history.push('/login');
+    }
+  };
+
+  const onError = () => null;
+
+  const [
+    createAccount,
+    { loading, error: fetchError, data: createAccountResult },
+  ] = useMutation<createAccountMutation, FormType>(CREATE_ACCOUNT, {
+    onCompleted,
+    onError,
+  });
+
+  const { register, handleSubmit, errors, formState } = useForm<FormType>({
     mode: 'onChange',
     defaultValues: { role: userRole.CLIENT },
   });
+
+  const onSubmit = (data: FormType) => {
+    createAccount({ variables: { ...data } });
+  };
 
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-32">
@@ -39,14 +66,23 @@ export const CreateAccount = () => {
         <h4 className="w-full text-left text-2xl mb-5 font-thin">
           create account
         </h4>
-        <form className="grid gap-3 mt-5 ">
+        <form className="grid gap-3 mt-5 " onSubmit={handleSubmit(onSubmit)}>
           <input
             type="email"
             name="email"
             placeholder="email"
             className="text-input"
-            ref={register}
+            ref={register({
+              required: true,
+              pattern: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/,
+            })}
           />
+          {errors.email?.type === 'required' && (
+            <FormError errorMessage="email is required" />
+          )}
+          {errors.email?.type === 'pattern' && (
+            <FormError errorMessage="email pattern is not matched" />
+          )}
           <input
             type="password"
             name="password"
@@ -64,6 +100,17 @@ export const CreateAccount = () => {
               );
             })}
           </select>
+          <FormButton
+            label="create account"
+            disabled={loading || !formState.isValid}
+            loading={loading}
+          />
+          {createAccountResult?.createAccount?.error && (
+            <FormError errorMessage={createAccountResult.createAccount.error} />
+          )}
+          {fetchError?.message && (
+            <FormError errorMessage={fetchError.message} />
+          )}
         </form>
         <div className="text-sm text-center mt-3">
           Already have account ?{' '}

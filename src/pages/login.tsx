@@ -8,6 +8,7 @@ import {
   loginMutation,
   loginMutationVariables,
 } from '../__generated__/loginMutation';
+import { isLoggedInVar } from '../apollo';
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($email: String!, $password: String!) {
@@ -23,6 +24,7 @@ export const Login = () => {
   const onCompleted = ({ login: { ok, token } }: loginMutation) => {
     if (ok) {
       console.log(token);
+      isLoggedInVar(true);
     }
   };
 
