@@ -8,7 +8,8 @@ import {
   loginMutation,
   loginMutationVariables,
 } from '../__generated__/loginMutation';
-import { isLoggedInVar } from '../apollo';
+import { isLoggedInVar, authToken } from '../apollo';
+import { LOCALSTORAGE_TOKEN } from '../constants';
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($email: String!, $password: String!) {
@@ -22,9 +23,10 @@ const LOGIN_MUTATION = gql`
 
 export const Login = () => {
   const onCompleted = ({ login: { ok, token } }: loginMutation) => {
-    if (ok) {
-      console.log(token);
+    if (ok && token) {
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
       isLoggedInVar(true);
+      authToken(token);
     }
   };
 
