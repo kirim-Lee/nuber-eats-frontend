@@ -1,43 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { gql, useQuery } from '@apollo/client';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { authToken, isLoggedInVar } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
 import { Restaurants } from '../pages/client/restaurant';
 import { Orders } from '../pages/owner/orders';
-import { NotFound } from '../pages/notFound';
 import { userRole } from '../__generated__/globalTypes';
-import { meQuery } from '../__generated__/meQuery';
-import { useEffect } from 'react';
+import { Header } from '../components/header';
+import { useMe } from '../hooks/useMe';
 
 const ClientRouter = () => [<Route exact path="/" component={Restaurants} />];
 
 const OwnerRouter = () => [<Route exact path="/" component={Orders} />];
 
-const ME_QUERY = gql`
-  query meQuery {
-    me {
-      id
-      email
-      role
-      verified
-    }
-  }
-`;
-
 export const LoggedInRouter = () => {
-  const { data, loading, error, refetch } = useQuery<meQuery>(ME_QUERY);
-  const token = authToken() || '';
+  const { data, loading, error } = useMe();
 
   const onLogout = () => {
     localStorage.removeItem(LOCALSTORAGE_TOKEN);
     isLoggedInVar(false);
     authToken(null);
   };
-
-  useEffect(() => {
-    refetch();
-  }, [token]);
 
   if (loading) {
     return (
@@ -59,6 +41,7 @@ export const LoggedInRouter = () => {
 
   return (
     <BrowserRouter>
+      <Header />
       <Switch>
         {data?.me.role}
         {data?.me.role === userRole.CLIENT ? ClientRouter : OwnerRouter}

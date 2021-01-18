@@ -10,6 +10,7 @@ import {
 } from '../__generated__/loginMutation';
 import { isLoggedInVar, authToken } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
+import { Logo } from '../components/logo';
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($email: String!, $password: String!) {
@@ -58,9 +59,7 @@ export const Login = () => {
         <title>Welcome to Nuber Eats!</title>
       </Helmet>
       <div className="w-full max-w-screen-sm px-5">
-        <h3 className="text-3xl scale-125 text-center mb-10 font-medium">
-          <span>Nuber</span> <span className=" text-lime-400">Eats</span>
-        </h3>
+        <Logo />
         <h4 className="w-full text-left text-2xl mb-5 font-thin">
           welcome back
         </h4>
