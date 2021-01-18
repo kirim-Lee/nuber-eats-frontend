@@ -1,8 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { gql, useQuery } from '@apollo/client';
-import { Helmet } from 'react-helmet';
-import { isLoggedInVar, authToken } from '../apollo';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { authToken, isLoggedInVar } from '../apollo';
+import { LOCALSTORAGE_TOKEN } from '../constants';
+import { Restaurants } from '../pages/client/restaurant';
+import { Orders } from '../pages/owner/orders';
+import { NotFound } from '../pages/notFound';
+import { userRole } from '../__generated__/globalTypes';
 import { meQuery } from '../__generated__/meQuery';
+import { useEffect } from 'react';
+
+const ClientRouter = () => [<Route exact path="/" component={Restaurants} />];
+
+const OwnerRouter = () => [<Route exact path="/" component={Orders} />];
 
 const ME_QUERY = gql`
   query meQuery {
@@ -16,11 +26,18 @@ const ME_QUERY = gql`
 `;
 
 export const LoggedInRouter = () => {
-  const { data, loading, error } = useQuery<meQuery>(ME_QUERY);
+  const { data, loading, error, refetch } = useQuery<meQuery>(ME_QUERY);
+  const token = authToken() || '';
 
-  const onClick = () => {
+  const onLogout = () => {
+    localStorage.removeItem(LOCALSTORAGE_TOKEN);
     isLoggedInVar(false);
+    authToken(null);
   };
+
+  useEffect(() => {
+    refetch();
+  }, [token]);
 
   if (loading) {
     return (
@@ -41,13 +58,13 @@ export const LoggedInRouter = () => {
   }
 
   return (
-    <div>
-      <Helmet>
-        <title>Logged in</title>
-      </Helmet>
-      <h1>logged in</h1>
-      <p>{data?.me?.email}</p>
-      <button onClick={onClick}>log out</button>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        {data?.me.role}
+        {data?.me.role === userRole.CLIENT ? ClientRouter : OwnerRouter}
+        <Redirect to="/" />
+      </Switch>
+      <button onClick={onLogout}>logout</button>
+    </BrowserRouter>
   );
 };

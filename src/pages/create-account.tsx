@@ -31,7 +31,7 @@ export const CreateAccount = () => {
     createAccount: { ok, error },
   }: createAccountMutation) => {
     if (ok) {
-      history.push('/login');
+      history.push('/');
     }
   };
 
@@ -114,7 +114,7 @@ export const CreateAccount = () => {
         </form>
         <div className="text-sm text-center mt-3">
           Already have account ?{' '}
-          <Link to="/login" className="text-lime-600 hover:underline">
+          <Link to="/" className="text-lime-600 hover:underline">
             Log in
           </Link>
         </div>
