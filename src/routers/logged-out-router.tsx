@@ -7,7 +7,7 @@ export const LoggedOutRouter = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/create-account" component={CreateAccount} />
+        <Route exact path="/create-account" component={CreateAccount} />,
         <Route exact path="/" component={Login} />
         <Route path="*" component={NotFound} />
       </Switch>

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { authToken, isLoggedInVar } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
 import { Restaurants } from '../pages/client/restaurant';
@@ -7,6 +7,8 @@ import { Orders } from '../pages/owner/orders';
 import { userRole } from '../__generated__/globalTypes';
 import { Header } from '../components/header';
 import { useMe } from '../hooks/useMe';
+import { NotFound } from '../pages/notFound';
+import { ConfirmEmail } from '../pages/user/confirm-email';
 
 const ClientRouter = () => [<Route exact path="/" component={Restaurants} />];
 
@@ -43,9 +45,9 @@ export const LoggedInRouter = () => {
     <BrowserRouter>
       <Header />
       <Switch>
-        {data?.me.role}
-        {data?.me.role === userRole.CLIENT ? ClientRouter : OwnerRouter}
-        <Redirect to="/" />
+        {data?.me.role === userRole.CLIENT ? ClientRouter() : OwnerRouter()}
+        <Route path="/confirm" component={ConfirmEmail} />
+        <Route path="*" component={NotFound} />
       </Switch>
       <button onClick={onLogout}>logout</button>
     </BrowserRouter>
