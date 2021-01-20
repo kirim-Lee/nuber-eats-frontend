@@ -1,10 +1,11 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql, useApolloClient, useMutation } from '@apollo/client';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   verifyEmailMutation,
   verifyEmailMutationVariables,
 } from '../../__generated__/verifyEmailMutation';
+import { useMe } from '../../hooks/useMe';
 
 const VERIFY_EMAIL_MUTATION = gql`
   mutation verifyEmailMutation($code: String!) {
@@ -16,11 +17,33 @@ const VERIFY_EMAIL_MUTATION = gql`
 `;
 
 export const ConfirmEmail = () => {
+  const { data: userData } = useMe();
+  const client = useApolloClient();
   const location = useLocation();
-  const [verifyEmail, { data, loading, error }] = useMutation<
+
+  const onCompleted = (data: verifyEmailMutation) => {
+    const {
+      verifyEmail: { ok },
+    } = data;
+    if (ok && userData?.me.id) {
+      client.writeFragment({
+        id: `User:${userData.me.id}`,
+        fragment: gql`
+          fragment VerifiedUser on User {
+            verified
+          }
+        `,
+        data: {
+          verified: true,
+        },
+      });
+    }
+  };
+
+  const [verifyEmail, { data }] = useMutation<
     verifyEmailMutation,
     verifyEmailMutationVariables
-  >(VERIFY_EMAIL_MUTATION);
+  >(VERIFY_EMAIL_MUTATION, { onCompleted });
 
   useEffect(() => {
     // get query code
