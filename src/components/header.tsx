@@ -6,6 +6,7 @@ import { Logo } from './logo';
 
 export const Header = () => {
   const { data } = useMe();
+  console.log('header', data);
   return (
     <>
       {!data?.me.verified && (
