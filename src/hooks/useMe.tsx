@@ -24,5 +24,5 @@ export const useMe = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  return { data, loading, error };
+  return { data, loading, error, refetch };
 };
