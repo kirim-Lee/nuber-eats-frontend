@@ -9,6 +9,7 @@ import { Header } from '../components/header';
 import { useMe } from '../hooks/useMe';
 import { NotFound } from '../pages/notFound';
 import { ConfirmEmail } from '../pages/user/confirm-email';
+import { EditProfile } from '../pages/user/edit-profile';
 
 const ClientRouter = () => [<Route exact path="/" component={Restaurants} />];
 
@@ -47,6 +48,7 @@ export const LoggedInRouter = () => {
       <Switch>
         {data?.me.role === userRole.CLIENT ? ClientRouter() : OwnerRouter()}
         <Route path="/confirm" component={ConfirmEmail} />
+        <Route path="/edit-profile" component={EditProfile} />
         <Route path="*" component={NotFound} />
       </Switch>
       <button onClick={onLogout}>logout</button>

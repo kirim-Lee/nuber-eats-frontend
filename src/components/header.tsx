@@ -9,7 +9,7 @@ export const Header = () => {
   return (
     <>
       {!data?.me.verified && (
-        <div className="bg-red-400 p-3 text-center text-xs">
+        <div className="bg-gradient-to-r from-yellow-300 via-green-400 to-blue-500 p-3 text-center text-xs ">
           <span>Please verify your email</span>
         </div>
       )}
@@ -17,7 +17,7 @@ export const Header = () => {
         <div className="w-full px-5 xl:px-0 max-w-screen-xl mx-auto flex justify-between items-center">
           <Logo className="inline-block text-4xl" />
           <span className="text-xs">
-            <Link to="/my-profile">
+            <Link to="/edit-profile">
               <FontAwesomeIcon icon={faAddressBook} /> {data?.me.email || ''}
             </Link>
           </span>

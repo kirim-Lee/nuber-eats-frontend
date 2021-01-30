@@ -1,6 +1,6 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client';
 import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   verifyEmailMutation,
   verifyEmailMutationVariables,
@@ -20,6 +20,7 @@ export const ConfirmEmail = () => {
   const { data: userData } = useMe();
   const client = useApolloClient();
   const location = useLocation();
+  const history = useHistory();
 
   const onCompleted = (data: verifyEmailMutation) => {
     const {
@@ -37,6 +38,7 @@ export const ConfirmEmail = () => {
           verified: true,
         },
       });
+      history.push('/');
     }
   };
 
