@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+import { url } from 'inspector';
 import {
   restaurantQuery,
   restaurantQueryVariables,
@@ -48,9 +49,30 @@ export const Restaurants = () => {
   console.log(data?.restaurants);
 
   return (
-    <h1>
-      uber its header -<p>category</p>
-      <p>list</p>`
-    </h1>
+    <div>
+      <form className="bg-gray-800 w-full py-40 flex items-center justify-center">
+        <input
+          type="search"
+          placeholder="Search restaurant..."
+          className="text-input w-3/12 rounded-md border-0"
+        />
+      </form>
+      {!loading && (
+        <div className="container mt-8">
+          <div className="flex justify-around mx-auto max-w-xs">
+            {data?.allCategories.categories?.map((category) => (
+              <div className="flex flex-col items-center">
+                <div
+                  key={category.id}
+                  className="w-14 h-14 rounded-full bg-gray-500 bg-cover bg-center cursor-pointer border-2 border-white hover:border-lime-400 "
+                  style={{ backgroundImage: `url(${category.icon})` }}
+                />
+                <span className="text-sm">{category.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
