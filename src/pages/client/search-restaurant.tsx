@@ -35,29 +35,38 @@ export const SearchRestaurant = () => {
     searchRestaurantVariables
   >(SEARCH_RESTAURANT);
 
-  const handleSearch = useCallback(
+  const handleSearchFromLocation = useCallback(
     (keyword: string) => {
-      if (keyword) {
+      if (!keyword) {
+        history.push('/');
+      }
+
+      if (keyword !== query) {
         setQuery(keyword);
         searchPager.updatePage(1);
         search({ variables: { query: keyword, page: 1 } });
       }
     },
-    [search, searchPager]
+    [query, history, searchPager, search]
+  );
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (newPage !== page) {
+        search({ variables: { query, page } });
+      }
+    },
+    [query, page, search]
   );
 
   useEffect(() => {
-    search({ variables: { query, page } });
-  }, [page]);
+    handlePageChange(page);
+  }, [page, handlePageChange]);
 
   useEffect(() => {
     const keyword = getSearch(location.search, 'searchTerm');
-    if (!keyword) {
-      history.replace('/');
-    } else if (query !== keyword) {
-      handleSearch(keyword);
-    }
-  }, [location.search, query]);
+    handleSearchFromLocation(keyword);
+  }, [location.search, handleSearchFromLocation]);
 
   return (
     <>
