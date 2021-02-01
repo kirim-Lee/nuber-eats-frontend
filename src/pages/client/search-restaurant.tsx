@@ -69,8 +69,8 @@ export const SearchRestaurant = () => {
   }, [location.search, handleSearchFromLocation]);
 
   return (
-    <>
-      <div>
+    <div className="container">
+      <div className="text-xl flex flex-row items-center gap-2 rounded-full bg-gray-200 p-4">
         search with{' '}
         <span className="text-pink-500">{called && ` ${query}`}</span>
       </div>
@@ -85,6 +85,6 @@ export const SearchRestaurant = () => {
         onNextPageClick={searchPager.onNextPage}
         onPrevPageClick={searchPager.onPrevPage}
       />
-    </>
+    </div>
   );
 };
