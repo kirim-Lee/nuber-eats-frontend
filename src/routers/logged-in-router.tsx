@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { authToken, isLoggedInVar } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
 import { Restaurants } from '../pages/client/restaurant';
+import { SearchRestaurant } from '../pages/client/search-restaurant';
 import { Orders } from '../pages/owner/orders';
 import { userRole } from '../__generated__/globalTypes';
 import { Header } from '../components/header';
@@ -11,7 +12,15 @@ import { NotFound } from '../pages/notFound';
 import { ConfirmEmail } from '../pages/user/confirm-email';
 import { EditProfile } from '../pages/user/edit-profile';
 
-const ClientRouter = () => [<Route exact path="/" component={Restaurants} />];
+const ClientRouter = () => [
+  <Route exact key={'restaurant'} path="/" component={Restaurants} />,
+  <Route
+    exact
+    key={'search'}
+    path="/search-restaurant"
+    component={SearchRestaurant}
+  />,
+];
 
 const OwnerRouter = () => [<Route exact path="/" component={Orders} />];
 

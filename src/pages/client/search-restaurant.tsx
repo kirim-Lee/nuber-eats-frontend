@@ -1,0 +1,81 @@
+import { gql, useLazyQuery } from '@apollo/client';
+import { useCallback, useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+import { Pagination, usePagination } from '../../components/pagination';
+import { Restaurant } from '../../components/restaurant';
+import { RESTAURANT_FRAGMENT } from '../../fragments';
+import { getSearch } from '../../util';
+import {
+  searchRestaurant,
+  searchRestaurantVariables,
+} from '../../__generated__/searchRestaurant';
+
+const SEARCH_RESTAURANT = gql`
+  query searchRestaurant($query: String!, $page: Float) {
+    searchRestaurant(query: $query, page: $page) {
+      ok
+      error
+      totalPages
+      totalResults
+      result {
+        ...RestaurantPart
+      }
+    }
+  }
+  ${RESTAURANT_FRAGMENT}
+`;
+export const SearchRestaurant = () => {
+  const [query, setQuery] = useState('');
+  const location = useLocation();
+  const history = useHistory();
+  const { page, ...searchPager } = usePagination(1);
+
+  const [search, { loading, data, called }] = useLazyQuery<
+    searchRestaurant,
+    searchRestaurantVariables
+  >(SEARCH_RESTAURANT);
+
+  const handleSearch = useCallback(
+    (keyword: string) => {
+      if (keyword) {
+        setQuery(keyword);
+        searchPager.updatePage(1);
+        search({ variables: { query: keyword, page: 1 } });
+      }
+    },
+    [search, searchPager]
+  );
+
+  useEffect(() => {
+    search({ variables: { query, page } });
+  }, [page]);
+
+  useEffect(() => {
+    const keyword = getSearch(location.search, 'searchTerm');
+    if (!keyword) {
+      history.replace('/');
+    } else if (query !== keyword) {
+      handleSearch(keyword);
+    }
+  }, [location.search, query]);
+
+  return (
+    <>
+      <div>
+        search with{' '}
+        <span className="text-pink-500">{called && ` ${query}`}</span>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-10 mt-5">
+        {data?.searchRestaurant.result?.map((restaurant) => (
+          <Restaurant key={restaurant.id} restaurant={restaurant} />
+        ))}
+      </div>
+      <Pagination
+        page={page}
+        totalPages={data?.searchRestaurant.totalPages ?? 1}
+        onNextPageClick={searchPager.onNextPage}
+        onPrevPageClick={searchPager.onPrevPage}
+      />
+    </>
+  );
+};

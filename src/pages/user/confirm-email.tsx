@@ -6,6 +6,7 @@ import {
   verifyEmailMutationVariables,
 } from '../../__generated__/verifyEmailMutation';
 import { useMe } from '../../hooks/useMe';
+import { getSearch } from '../../util';
 
 const VERIFY_EMAIL_MUTATION = gql`
   mutation verifyEmailMutation($code: String!) {
@@ -49,12 +50,7 @@ export const ConfirmEmail = () => {
 
   useEffect(() => {
     // get query code
-    const queries = location.search
-      .replace('?', '')
-      .split('&')
-      .map((query) => query.split('='));
-
-    const code = queries.find(([key]) => key === 'code')?.[1] ?? '';
+    const code = getSearch(location.search, 'code');
 
     // if code then call api verify email
     if (code) {

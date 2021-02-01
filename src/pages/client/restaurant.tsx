@@ -1,15 +1,13 @@
 import { gql, useQuery } from '@apollo/client';
-import { useState } from 'react';
 import { Restaurant } from '../../components/restaurant';
 import {
   restaurantQuery,
   restaurantQueryVariables,
 } from '../../__generated__/restaurantQuery';
-import {
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
+import { RESTAURANT_FRAGMENT } from '../../fragments';
+import { Pagination, usePagination } from '../../components/pagination';
 
 const RESTAURANT_QUERY = gql`
   query restaurantQuery($page: Float) {
@@ -31,38 +29,46 @@ const RESTAURANT_QUERY = gql`
       totalPages
       totalResults
       results {
-        id
-        name
-        coverImage
-        category {
-          id
-          name
-          icon
-        }
-        address
-        isPromoted
+        ...RestaurantPart
       }
     }
   }
+  ${RESTAURANT_FRAGMENT}
 `;
+
+interface ISearchForm {
+  searchTerm: string;
+}
 export const Restaurants = () => {
-  const [page, setPage] = useState(1);
+  const history = useHistory();
+  const { page, ...restaurantPager } = usePagination(1);
 
-  const { data, loading, error } = useQuery<
-    restaurantQuery,
-    restaurantQueryVariables
-  >(RESTAURANT_QUERY, { variables: { page } });
+  const { data, loading } = useQuery<restaurantQuery, restaurantQueryVariables>(
+    RESTAURANT_QUERY,
+    { variables: { page } }
+  );
 
-  const onNextPageClick = () => setPage((current) => current + 1);
-  const onPrevPageClick = () => setPage((current) => current - 1);
+  const onSearchSubmit = ({ searchTerm }: ISearchForm) => {
+    history.push({
+      pathname: '/search-restaurant',
+      search: `searchTerm=${searchTerm}`,
+    });
+  };
+
+  const { register, handleSubmit } = useForm();
 
   return (
     <div>
-      <form className="bg-gray-800 w-full py-40 flex items-center justify-center">
+      <form
+        className="bg-gray-800 w-full py-40 flex items-center justify-center"
+        onSubmit={handleSubmit(onSearchSubmit)}
+      >
         <input
           type="search"
           placeholder="Search restaurant..."
-          className="text-input w-3/12 rounded-md border-0"
+          className="text-input w-3/4 md:w-3/12 rounded-md border-0"
+          name="searchTerm"
+          ref={register({ required: true, min: 2 })}
         />
       </form>
       {!loading && (
@@ -80,42 +86,17 @@ export const Restaurants = () => {
             ))}
           </div>
           {/* restaurant list */}
-          <div className="grid grid-cols-3 gap-x-5 gap-y-10 mt-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-10 mt-5">
             {data?.restaurants.results?.map((restaurant) => (
               <Restaurant key={restaurant.id} restaurant={restaurant} />
             ))}
           </div>
-          <div className="grid grid-cols-3 text-center max-w-md mt-10 mx-auto items-center">
-            <div>
-              {page > 1 && (
-                <button
-                  className="focus:outline-none"
-                  onClick={onPrevPageClick}
-                >
-                  <FontAwesomeIcon
-                    icon={faChevronLeft}
-                    className="font-medium text-xl"
-                  />
-                </button>
-              )}
-            </div>
-            <span className="mx-5">
-              page {page} of {data?.restaurants.totalPages ?? 0}
-            </span>
-            <div>
-              {page < (data?.restaurants.totalPages ?? 0) && (
-                <button
-                  className="focus:outline-none"
-                  onClick={onNextPageClick}
-                >
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    className="font-medium text-xl"
-                  />
-                </button>
-              )}
-            </div>
-          </div>
+          <Pagination
+            page={page}
+            totalPages={data?.restaurants.totalPages ?? 1}
+            onNextPageClick={restaurantPager.onNextPage}
+            onPrevPageClick={restaurantPager.onPrevPage}
+          />
         </div>
       )}
     </div>

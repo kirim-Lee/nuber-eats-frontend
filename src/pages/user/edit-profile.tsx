@@ -74,6 +74,7 @@ export const EditProfile = () => {
   return (
     <div className="mt-52 flex flex-col justify-center items-center">
       <h4 className="font-semibold text-2xl mb-3">Edit profile</h4>
+      <p>your role is {userData?.me.role}</p>
       <form
         className="grid max-w-screen-sm gap-3 mt-5 w-full mb-5"
         onSubmit={handleSubmit(onSubmit)}
