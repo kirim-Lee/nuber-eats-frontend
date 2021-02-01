@@ -5,8 +5,8 @@ import {
   restaurantQueryVariables,
 } from '../../__generated__/restaurantQuery';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
-import { RESTAURANT_FRAGMENT } from '../../fragments';
+import { Link, useHistory } from 'react-router-dom';
+import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from '../../fragments';
 import { Pagination, usePagination } from '../../components/pagination';
 
 const RESTAURANT_QUERY = gql`
@@ -15,11 +15,7 @@ const RESTAURANT_QUERY = gql`
       ok
       error
       categories {
-        id
-        name
-        icon
-        slug
-        restaurantCount
+        ...CategoryPart
       }
     }
 
@@ -33,6 +29,7 @@ const RESTAURANT_QUERY = gql`
       }
     }
   }
+  ${CATEGORY_FRAGMENT}
   ${RESTAURANT_FRAGMENT}
 `;
 
@@ -75,14 +72,16 @@ export const Restaurants = () => {
         <div className="container mt-8">
           <div className="flex justify-around mx-auto max-w-xs ">
             {data?.allCategories.categories?.map((category) => (
-              <div className="flex flex-col items-center group cursor-pointer">
-                <div
-                  key={category.id}
-                  className="w-14 h-14 rounded-full bg-gray-500 bg-cover bg-center border-2 border-white group-hover:border-lime-400 "
-                  style={{ backgroundImage: `url(${category.icon})` }}
-                />
-                <span className="text-sm">{category.name}</span>
-              </div>
+              <Link to={`/category/${category.slug}`} key={category.id}>
+                <div className="flex flex-col items-center group cursor-pointer">
+                  <div
+                    key={category.id}
+                    className="w-14 h-14 rounded-full bg-gray-500 bg-cover bg-center border-2 border-white group-hover:border-lime-400 "
+                    style={{ backgroundImage: `url(${category.icon})` }}
+                  />
+                  <span className="text-sm">{category.name}</span>
+                </div>
+              </Link>
             ))}
           </div>
           {/* restaurant list */}

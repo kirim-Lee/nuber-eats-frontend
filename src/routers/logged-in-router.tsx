@@ -4,6 +4,7 @@ import { authToken, isLoggedInVar } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
 import { Restaurants } from '../pages/client/restaurant';
 import { SearchRestaurant } from '../pages/client/search-restaurant';
+import { Category } from '../pages/client/category';
 import { Orders } from '../pages/owner/orders';
 import { userRole } from '../__generated__/globalTypes';
 import { Header } from '../components/header';
@@ -20,6 +21,7 @@ const ClientRouter = () => [
     path="/search-restaurant"
     component={SearchRestaurant}
   />,
+  <Route exact key={'category'} path="/category/:slug" component={Category} />,
 ];
 
 const OwnerRouter = () => [<Route exact path="/" component={Orders} />];

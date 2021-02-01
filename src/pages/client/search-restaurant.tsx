@@ -30,7 +30,7 @@ export const SearchRestaurant = () => {
   const history = useHistory();
   const { page, ...searchPager } = usePagination(1);
 
-  const [search, { loading, data, called }] = useLazyQuery<
+  const [search, { data, called }] = useLazyQuery<
     searchRestaurant,
     searchRestaurantVariables
   >(SEARCH_RESTAURANT);
