@@ -2,7 +2,7 @@
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { authToken, isLoggedInVar } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
-import { Restaurants } from '../pages/client/restaurant';
+import { Restaurants } from '../pages/client/restaurants';
 import { SearchRestaurant } from '../pages/client/search-restaurant';
 import { Category } from '../pages/client/category';
 import { Orders } from '../pages/owner/orders';

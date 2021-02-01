@@ -30,10 +30,9 @@ export const Category = () => {
   const { slug } = useParams<MatchParam>();
   const { page, ...pager } = usePagination(1);
 
-  const { data, loading } = useQuery<category, categoryVariables>(
-    CATEGORY_QUERY,
-    { variables: { page, slug } }
-  );
+  const { data } = useQuery<category, categoryVariables>(CATEGORY_QUERY, {
+    variables: { page, slug },
+  });
 
   return (
     <div className="container flex flex-col">
