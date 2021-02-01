@@ -1,9 +1,15 @@
 import { gql, useQuery } from '@apollo/client';
+import { useState } from 'react';
 import { Restaurant } from '../../components/restaurant';
 import {
   restaurantQuery,
   restaurantQueryVariables,
 } from '../../__generated__/restaurantQuery';
+import {
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const RESTAURANT_QUERY = gql`
   query restaurantQuery($page: Float) {
@@ -40,13 +46,15 @@ const RESTAURANT_QUERY = gql`
   }
 `;
 export const Restaurants = () => {
+  const [page, setPage] = useState(1);
+
   const { data, loading, error } = useQuery<
     restaurantQuery,
     restaurantQueryVariables
-  >(RESTAURANT_QUERY, { variables: { page: 1 } });
+  >(RESTAURANT_QUERY, { variables: { page } });
 
-  console.log(data?.allCategories);
-  console.log(data?.restaurants);
+  const onNextPageClick = () => setPage((current) => current + 1);
+  const onPrevPageClick = () => setPage((current) => current - 1);
 
   return (
     <div>
@@ -76,6 +84,37 @@ export const Restaurants = () => {
             {data?.restaurants.results?.map((restaurant) => (
               <Restaurant key={restaurant.id} restaurant={restaurant} />
             ))}
+          </div>
+          <div className="grid grid-cols-3 text-center max-w-md mt-10 mx-auto items-center">
+            <div>
+              {page > 1 && (
+                <button
+                  className="focus:outline-none"
+                  onClick={onPrevPageClick}
+                >
+                  <FontAwesomeIcon
+                    icon={faChevronLeft}
+                    className="font-medium text-xl"
+                  />
+                </button>
+              )}
+            </div>
+            <span className="mx-5">
+              page {page} of {data?.restaurants.totalPages ?? 0}
+            </span>
+            <div>
+              {page < (data?.restaurants.totalPages ?? 0) && (
+                <button
+                  className="focus:outline-none"
+                  onClick={onNextPageClick}
+                >
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    className="font-medium text-xl"
+                  />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
