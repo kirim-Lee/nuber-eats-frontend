@@ -21,6 +21,7 @@ export interface category_category_restaurants_category {
   id: number;
   name: string;
   icon: string | null;
+  slug: string;
 }
 
 export interface category_category_restaurants {

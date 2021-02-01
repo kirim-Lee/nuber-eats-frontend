@@ -12,6 +12,7 @@ export interface RestaurantPart_category {
   id: number;
   name: string;
   icon: string | null;
+  slug: string;
 }
 
 export interface RestaurantPart {

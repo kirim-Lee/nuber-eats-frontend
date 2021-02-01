@@ -28,6 +28,7 @@ export interface restaurantQuery_restaurants_results_category {
   id: number;
   name: string;
   icon: string | null;
+  slug: string;
 }
 
 export interface restaurantQuery_restaurants_results {

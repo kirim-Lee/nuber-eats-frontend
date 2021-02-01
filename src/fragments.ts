@@ -9,6 +9,7 @@ export const RESTAURANT_FRAGMENT = gql`
       id
       name
       icon
+      slug
     }
     address
     isPromoted

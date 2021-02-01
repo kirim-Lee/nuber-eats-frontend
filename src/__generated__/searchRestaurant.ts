@@ -12,6 +12,7 @@ export interface searchRestaurant_searchRestaurant_result_category {
   id: number;
   name: string;
   icon: string | null;
+  slug: string;
 }
 
 export interface searchRestaurant_searchRestaurant_result {

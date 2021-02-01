@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { authToken, isLoggedInVar } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
 import { Restaurants } from '../pages/client/restaurants';
+import { Restaurant } from '../pages/client/restaurant';
 import { SearchRestaurant } from '../pages/client/search-restaurant';
 import { Category } from '../pages/client/category';
 import { Orders } from '../pages/owner/orders';
@@ -14,7 +15,13 @@ import { ConfirmEmail } from '../pages/user/confirm-email';
 import { EditProfile } from '../pages/user/edit-profile';
 
 const ClientRouter = () => [
-  <Route exact key={'restaurant'} path="/" component={Restaurants} />,
+  <Route exact key={'restaurants'} path="/" component={Restaurants} />,
+  <Route
+    exact
+    key={'restaurant'}
+    path="/restaurant/:id"
+    component={Restaurant}
+  />,
   <Route
     exact
     key={'search'}
