@@ -62,15 +62,56 @@ describe('<Login />', () => {
       email: 'ttt@ttt.com',
       password: '12345',
     };
+
+    const { getByPlaceholderText, getByRole, queryByText } = renderResult;
+    const email = getByPlaceholderText(/email/i);
+    const password = getByPlaceholderText(/password/i);
+    const submit = getByRole('button');
+
+    const queryHandler = jest.fn().mockResolvedValue({
+      data: {
+        login: { ok: true, token: 'token string' },
+      },
+    });
+
+    jest.spyOn(Storage.prototype, 'setItem');
+    mockClient.setRequestHandler(LOGIN_MUTATION, queryHandler);
+
+    await waitFor(() => {
+      userEvent.type(email, formData.email);
+      userEvent.type(password, formData.password);
+    });
+
+    expect(queryByText('Email is required')).not.toBeInTheDocument();
+    expect(queryByText('Password is required')).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      userEvent.click(submit);
+    });
+    expect(queryHandler).toHaveBeenCalledTimes(1);
+    expect(queryHandler).toHaveBeenCalledWith(formData);
+
+    expect(localStorage.setItem).toHaveBeenCalledWith('token', 'token string');
+  });
+
+  it('submit form and calls mutation error', async () => {
+    const formData = {
+      email: 'ttt@ttt.com',
+      password: '12345',
+    };
+
     const { getByPlaceholderText, getByRole } = renderResult;
     const email = getByPlaceholderText(/email/i);
     const password = getByPlaceholderText(/password/i);
     const submit = getByRole('button');
 
-    const queryHandler = jest
-      .fn()
-      .mockResolvedValue({ data: { login: { ok: true, token: 'string' } } });
+    const queryHandler = jest.fn().mockResolvedValue({
+      data: {
+        login: { ok: false, error: 'error accure' },
+      },
+    });
 
+    jest.spyOn(Storage.prototype, 'setItem');
     mockClient.setRequestHandler(LOGIN_MUTATION, queryHandler);
 
     await waitFor(() => {
@@ -82,7 +123,8 @@ describe('<Login />', () => {
       userEvent.click(submit);
     });
 
-    expect(queryHandler).toHaveBeenCalledTimes(1);
-    expect(queryHandler).toHaveBeenCalledWith(formData);
+    const errorMessage = getByRole('alert');
+    expect(errorMessage).toHaveTextContent('error accure');
+    expect(localStorage.setItem).not.toHaveBeenCalled();
   });
 });
