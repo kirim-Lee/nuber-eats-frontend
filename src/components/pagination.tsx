@@ -47,10 +47,10 @@ export const Pagination: React.FC<IProps> = ({
         )}
       </div>
       <span className="mx-5">
-        page {page} of {totalPages ?? 0}
+        page {page} of {totalPages}
       </span>
       <div>
-        {page < (totalPages ?? 0) && (
+        {page < totalPages && (
           <button className="focus:outline-none" onClick={onNextPageClick}>
             <FontAwesomeIcon
               icon={faChevronRight}
