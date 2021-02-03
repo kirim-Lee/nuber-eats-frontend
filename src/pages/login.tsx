@@ -12,7 +12,7 @@ import { isLoggedInVar, authToken } from '../apollo';
 import { LOCALSTORAGE_TOKEN } from '../constants';
 import { Logo } from '../components/logo';
 
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
   mutation loginMutation($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       ok
@@ -51,7 +51,8 @@ export const Login = () => {
   const onSubmit: SubmitHandler<loginMutationVariables> = (variables) => {
     login({ variables });
   };
-  const onInvalid: SubmitErrorHandler<loginMutationVariables> = () => {};
+
+  const onInvalid: SubmitErrorHandler<loginMutationVariables> = (data) => {};
 
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-32">
