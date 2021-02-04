@@ -26,11 +26,11 @@ describe('<Login />', () => {
   });
 
   it('display email validation error', async () => {
-    const { getAllByPlaceholderText, getByRole } = renderResult;
-    const email = getAllByPlaceholderText(/email/i);
+    const { getByPlaceholderText, getByRole } = renderResult;
+    const email = getByPlaceholderText(/email/i);
     await waitFor(() => {
-      userEvent.type(email[0], 'ttt@ttt.com');
-      userEvent.clear(email[0]);
+      userEvent.type(email, 'ttt@ttt.com');
+      userEvent.clear(email);
     });
     const errorMessage = getByRole('alert');
     expect(errorMessage).toHaveTextContent('Email is required');

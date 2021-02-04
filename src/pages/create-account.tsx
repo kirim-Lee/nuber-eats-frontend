@@ -10,7 +10,7 @@ import {
 } from '../__generated__/createAccountMutation';
 import { userRole } from '../__generated__/globalTypes';
 
-const CREATE_ACCOUNT = gql`
+export const CREATE_ACCOUNT = gql`
   mutation createAccountMutation(
     $email: String!
     $password: String!
@@ -88,9 +88,17 @@ export const CreateAccount = () => {
             name="password"
             placeholder="password"
             className="text-input"
-            ref={register}
+            ref={register({ required: true })}
           />
-          <select name="role" ref={register} className="select">
+          {errors.password?.type === 'required' && (
+            <FormError errorMessage="password is required" />
+          )}
+          <select
+            name="role"
+            ref={register}
+            className="select"
+            data-testid="role-select"
+          >
             {Object.keys(userRole).map((key) => {
               return (
                 <option value={key} key={key.toString()}>
