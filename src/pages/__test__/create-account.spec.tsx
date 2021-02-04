@@ -5,7 +5,20 @@ import { CreateAccount, CREATE_ACCOUNT } from '../create-account';
 import { render, RenderResult, waitFor } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
 import { userRole } from '../../__generated__/globalTypes';
-import { getByText } from '@testing-library/react';
+
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => {
+  const realModule = jest.requireActual('react-router-dom');
+  return {
+    ...realModule,
+    useHistory: () => {
+      return {
+        push: mockHistoryPush,
+      };
+    },
+  };
+});
 
 describe('<CreateAccount />', () => {
   let mockClient: MockApolloClient;
@@ -87,6 +100,7 @@ describe('<CreateAccount />', () => {
     expect(handler).toHaveBeenCalledWith(createForm);
 
     expect(queryByRole('alert')).not.toBeInTheDocument();
+    expect(mockHistoryPush).toHaveBeenCalledTimes(1);
   });
 
   it('create account query return error case', async () => {
