@@ -164,4 +164,8 @@ describe('<CreateAccount />', () => {
 
     getByText('messages');
   });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
 });
