@@ -60,8 +60,10 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/cypress": "^7.0.3",
     "@types/react-helmet": "^6.1.0",
-    "@types/react-router-dom": "^5.1.7"
+    "@types/react-router-dom": "^5.1.7",
+    "cypress": "^6.4.0"
   },
   "jest": {
     "collectCoverageFrom": [
