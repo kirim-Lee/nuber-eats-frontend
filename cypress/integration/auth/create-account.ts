@@ -1,5 +1,3 @@
-import { timers } from 'cypress/types/jquery';
-
 describe('create account', () => {
   it('should see validation error', () => {
     cy.visit('/');
