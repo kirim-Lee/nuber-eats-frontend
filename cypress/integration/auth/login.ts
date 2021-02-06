@@ -12,6 +12,8 @@ describe('first test', () => {
 
   it('can fill out the form', () => {
     cy.visit('/')
+      //@ts-ignore
+      .assertLoggedOut()
       .get('[name=email]')
       .type('ttt@ttt.com')
       .get('button')

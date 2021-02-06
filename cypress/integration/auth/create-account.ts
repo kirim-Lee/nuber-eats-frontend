@@ -58,12 +58,9 @@ describe('create account', () => {
 
     cy.wait(1000).title().should('eq', 'Welcome to Nuber Eats!');
 
-    cy.get('[name=email]')
-      .type('real@mail.com')
-      .get('[name=password]')
-      .type('real@mail.com')
-      .get('button')
-      .click();
-    cy.window().its('localStorage.token').should('be.a', 'string');
+    // @ts-ignore
+    cy.login('real@mail.com', 'real@mail.com');
+
+    // cy.window().its('localStorage.token').should('be.a', 'string');
   });
 });
