@@ -11,6 +11,7 @@ export interface createRestaurantMutation_createRestaurant {
   __typename: "CreateRestaurantOutput";
   ok: boolean;
   error: string | null;
+  id: number | null;
 }
 
 export interface createRestaurantMutation {
