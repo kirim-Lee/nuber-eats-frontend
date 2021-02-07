@@ -32,16 +32,7 @@ describe('create account', () => {
     cy.intercept('http://localhost:4000/graphql', (req) => {
       if (req.body?.operationName === 'createAccountMutation') {
         req.reply((res) => {
-          // res.send(200);
-          res.send({
-            data: {
-              createAccount: {
-                ok: true,
-                error: null,
-                __typename: 'CreateAccountOutput',
-              },
-            },
-          });
+          res.send({ fixture: 'auth/create-account.json' });
         });
       }
     });

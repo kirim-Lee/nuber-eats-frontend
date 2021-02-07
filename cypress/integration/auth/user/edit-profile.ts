@@ -12,7 +12,7 @@ describe('Edit profile', () => {
     cy.intercept('POST', 'http://localhost:4000/graphql', (req) => {
       if (req.body?.operationName === 'editProfileMutation') {
         req.reply((res) => {
-          res.send({ fixture: 'auth/create-account.json' });
+          res.send({ fixture: 'user/edit-profile.json' });
         });
       }
     });
