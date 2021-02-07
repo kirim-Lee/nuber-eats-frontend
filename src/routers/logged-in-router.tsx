@@ -6,32 +6,26 @@ import { Restaurants } from '../pages/client/restaurants';
 import { Restaurant } from '../pages/client/restaurant';
 import { SearchRestaurant } from '../pages/client/search-restaurant';
 import { Category } from '../pages/client/category';
-import { Orders } from '../pages/owner/orders';
+import { MyRestaurants } from '../pages/owner/my-restaurant';
 import { userRole } from '../__generated__/globalTypes';
 import { Header } from '../components/header';
 import { useMe } from '../hooks/useMe';
 import { NotFound } from '../pages/notFound';
 import { ConfirmEmail } from '../pages/user/confirm-email';
 import { EditProfile } from '../pages/user/edit-profile';
+import { AddRestaurant } from '../pages/owner/add-restaurant';
 
-const ClientRouter = () => [
-  <Route exact key={'restaurants'} path="/" component={Restaurants} />,
-  <Route
-    exact
-    key={'restaurant'}
-    path="/restaurant/:id"
-    component={Restaurant}
-  />,
-  <Route
-    exact
-    key={'search'}
-    path="/search-restaurant"
-    component={SearchRestaurant}
-  />,
-  <Route exact key={'category'} path="/category/:slug" component={Category} />,
+const ClientRouter = [
+  { path: '/', component: Restaurants },
+  { path: '/restaurant/:id', component: Restaurant },
+  { path: '/search-restaurant', component: SearchRestaurant },
+  { path: '/category/:slug', component: Category },
 ];
 
-const OwnerRouter = () => [<Route exact path="/" component={Orders} />];
+const OwnerRouter = [
+  { path: '/', component: MyRestaurants },
+  { path: '/add-restaurant', component: AddRestaurant },
+];
 
 export const LoggedInRouter = () => {
   const { data, loading, error } = useMe();
@@ -64,7 +58,16 @@ export const LoggedInRouter = () => {
     <BrowserRouter>
       <Header />
       <Switch>
-        {data?.me.role === userRole.CLIENT ? ClientRouter() : OwnerRouter()}
+        {(data?.me.role === userRole.CLIENT ? ClientRouter : OwnerRouter).map(
+          (route) => (
+            <Route
+              exact={true}
+              key={route.path}
+              path={route.path}
+              component={route.component}
+            />
+          )
+        )}
         <Route path="/confirm" component={ConfirmEmail} />
         <Route path="/edit-profile" component={EditProfile} />
         <Route path="*" component={NotFound} />
