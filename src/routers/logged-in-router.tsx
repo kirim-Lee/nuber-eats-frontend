@@ -6,7 +6,7 @@ import { Restaurants } from '../pages/client/restaurants';
 import { Restaurant } from '../pages/client/restaurant';
 import { SearchRestaurant } from '../pages/client/search-restaurant';
 import { Category } from '../pages/client/category';
-import { MyRestaurants } from '../pages/owner/my-restaurant';
+import { MyRestaurants } from '../pages/owner/my-restaurants';
 import { userRole } from '../__generated__/globalTypes';
 import { Header } from '../components/header';
 import { useMe } from '../hooks/useMe';
@@ -14,6 +14,9 @@ import { NotFound } from '../pages/notFound';
 import { ConfirmEmail } from '../pages/user/confirm-email';
 import { EditProfile } from '../pages/user/edit-profile';
 import { AddRestaurant } from '../pages/owner/add-restaurant';
+import { MyRestaurant } from '../pages/owner/my-restaurant';
+import { Loading } from '../components/loading';
+import { AddDish } from '../pages/owner/add-dish';
 
 const ClientRouter = [
   { path: '/', component: Restaurants },
@@ -25,6 +28,8 @@ const ClientRouter = [
 const OwnerRouter = [
   { path: '/', component: MyRestaurants },
   { path: '/add-restaurant', component: AddRestaurant },
+  { path: '/restaurant/:id', component: MyRestaurant },
+  { path: '/restaurant/:id/dish', component: AddDish },
 ];
 
 export const LoggedInRouter = () => {
@@ -37,11 +42,7 @@ export const LoggedInRouter = () => {
   };
 
   if (loading) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <span className="font-medium text-xl tracking-wide">loading...</span>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error?.message) {

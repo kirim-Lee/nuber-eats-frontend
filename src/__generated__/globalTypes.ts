@@ -13,6 +13,17 @@ export enum userRole {
   OWNER = "OWNER",
 }
 
+export interface DishChoiceInputType {
+  name: string;
+  extra?: number | null;
+}
+
+export interface DishOptionInputType {
+  name: string;
+  choices?: DishChoiceInputType[] | null;
+  extra?: number | null;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

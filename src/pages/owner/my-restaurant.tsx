@@ -1,51 +1,75 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-
-import { Helmet } from 'react-helmet';
+import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Restaurant } from '../../components/restaurant';
-import { RESTAURANT_FRAGMENT } from '../../fragments';
-import { myRestaurants } from '../../__generated__/myRestaurants';
+import { Loading } from '../../components/loading';
+import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from '../../fragments';
+import {
+  myRestaurant,
+  myRestaurantVariables,
+} from '../../__generated__/myRestaurant';
+
+type ParamType = { id: string };
 
 export const MY_RESTAURANT_QUERY = gql`
-  query myRestaurants {
-    myRestaurants {
+  query myRestaurant($id: Float!) {
+    myRestaurant(id: $id) {
       ok
       error
-      results {
+      restaurant {
         ...RestaurantPart
+        menu {
+          ...DishPart
+        }
       }
     }
   }
   ${RESTAURANT_FRAGMENT}
+  ${DISH_FRAGMENT}
 `;
-export const MyRestaurants = () => {
-  const { data } = useQuery<myRestaurants>(MY_RESTAURANT_QUERY);
 
+export const MyRestaurant = () => {
+  const { id } = useParams<ParamType>();
+  const { data, loading } = useQuery<myRestaurant, myRestaurantVariables>(
+    MY_RESTAURANT_QUERY,
+    {
+      variables: { id: Number(id) },
+    }
+  );
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  console.log(data);
   return (
     <div>
-      <Helmet>
-        <title>My Restaurants! | Nuber Eats</title>
-      </Helmet>
-      <div className="max-w-screen-2xl mx-auto mt-32">
-        <h2 className="text-4xl font-medium mb-10">My Restaurant</h2>
-        {data?.myRestaurants.results?.length === 0 ? (
-          <>
-            <h4 className="text-xl mb-5">You have no restaurant</h4>
-          </>
-        ) : (
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-10 mt-5">
-              {data?.myRestaurants.results?.map((restaurant) => (
-                <Restaurant key={restaurant.id} restaurant={restaurant} />
-              ))}
-            </div>
-          </div>
-        )}
-        <Link className="link" to="/add-restaurant">
-          Create one &rarr;
+      <div
+        className="bg-gray-700 py-28 bg-center bg-cover"
+        style={{
+          backgroundImage: `url(${data?.myRestaurant.restaurant?.coverImage})`,
+        }}
+      />
+      <div className="container mt-10">
+        <h2 className="text-4xl font-medium mb-10">
+          {data?.myRestaurant.restaurant?.name}
+        </h2>
+        <Link
+          to={`${id}/dish`}
+          className="mr-6 text-white bg-gray-800 py-3 px-10"
+        >
+          Add Dish &rarr;
         </Link>
+        <Link to={``} className="mr-6 text-white bg-lime-600 py-3 px-10">
+          Buy Promotion &rarr;
+        </Link>
+        {data?.myRestaurant.restaurant?.menu?.length === 0 ? (
+          <h4 className="text-xl mt-6">you have no menu</h4>
+        ) : (
+          <>{/* TODO : dishes */}</>
+        )}
       </div>
+      <div></div>
     </div>
   );
 };

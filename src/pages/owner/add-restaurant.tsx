@@ -10,7 +10,7 @@ import {
   createRestaurantMutation,
   createRestaurantMutationVariables,
 } from '../../__generated__/createRestaurantMutation';
-import { MY_RESTAURANT_QUERY } from './my-restaurant';
+import { MY_RESTAURANTS_QUERY } from './my-restaurants';
 
 const CREATE_RESTAURANT_MUTATION = gql`
   mutation createRestaurantMutation(
@@ -49,11 +49,11 @@ export const AddRestaurant = () => {
 
   const onCompleted = (data: createRestaurantMutation) => {
     if (data?.createRestaurant?.ok) {
-      const queryResult = client.readQuery({ query: MY_RESTAURANT_QUERY });
+      const queryResult = client.readQuery({ query: MY_RESTAURANTS_QUERY });
       const { name, address, coverImage, categoryName } = getValues();
 
       client.writeQuery({
-        query: MY_RESTAURANT_QUERY,
+        query: MY_RESTAURANTS_QUERY,
         data: {
           myRestaurants: {
             ...queryResult?.myRestaurants,
@@ -88,7 +88,7 @@ export const AddRestaurant = () => {
   >(CREATE_RESTAURANT_MUTATION, {
     onCompleted,
     onError,
-    // refetchQueries: [{ query: MY_RESTAURANT_QUERY }],
+    // refetchQueries: [{ query: MY_RESTAURANTS_QUERY }],
   });
 
   const [uploading, setUploading] = useState(false);
