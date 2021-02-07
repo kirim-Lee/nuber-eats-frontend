@@ -1,8 +1,10 @@
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
 import { FormButton } from '../../components/form-button';
+import { FormError } from '../../components/form-error';
 import {
   createRestaurantMutation,
   createRestaurantMutationVariables,
@@ -27,7 +29,9 @@ const CREATE_RESTAURANT_MUTATION = gql`
   }
 `;
 
-type FormValue = createRestaurantMutationVariables;
+type FormValue = createRestaurantMutationVariables & {
+  file?: FileList;
+};
 
 const initialValue: FormValue = {
   name: '',
@@ -37,18 +41,47 @@ const initialValue: FormValue = {
 };
 
 export const AddRestaurant = () => {
+  const onCompleted = (data: createRestaurantMutation) => {
+    if (data.createRestaurant?.ok) {
+    }
+  };
+
   const [createRestaurant, { data, error, loading }] = useMutation<
     createRestaurantMutation,
     createRestaurantMutationVariables
-  >(CREATE_RESTAURANT_MUTATION);
+  >(CREATE_RESTAURANT_MUTATION, { onCompleted });
+
+  const [uploading, setUploading] = useState(false);
 
   const { register, handleSubmit } = useForm<FormValue>({
     mode: 'onChange',
     defaultValues: initialValue,
   });
 
-  const onSubmit = (values: FormValue) => {
-    console.log(values);
+  const onSubmit = async (values: FormValue) => {
+    try {
+      if (values.file) {
+        const form = new FormData();
+        form.append('file', values?.file[0]);
+
+        setUploading(true);
+
+        const request = await fetch('http://localhost:4000/uploads', {
+          method: 'POST',
+          body: form,
+        });
+        const res = await request.json();
+
+        values.coverImage = res.url || '';
+        delete values.file;
+
+        createRestaurant({ variables: values });
+
+        setUploading(false);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -82,11 +115,15 @@ export const AddRestaurant = () => {
             placeholder="category name"
             ref={register({ required: 'category is required' })}
           />
+          <input type="file" ref={register} name="file" accept="image/*" />
           <FormButton
             label="Create Restaurant"
-            disabled={loading}
-            loading={loading}
+            disabled={loading || uploading}
+            loading={loading || uploading}
           />
+          {data?.createRestaurant.error && (
+            <FormError errorMessage={data.createRestaurant.error} />
+          )}
         </form>
       </div>
     </div>
